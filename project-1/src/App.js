@@ -7,6 +7,7 @@ class App extends Component {
 	// 	this.handlePClick = this.handlePClick.bind(this);
 
 	state = {
+		counter: 0,
 		posts: [
 			{
 				id: 1,
@@ -25,14 +26,37 @@ class App extends Component {
 			},
 		],
 	};
+	timeoutUpdate = null;
+
+	handleTimeout = () => {
+		const { counter, posts } = this.state;
+		posts[0].title = 'O título mudou';
+		this.timeoutUpdate = setTimeout(() => {
+			this.setState({ counter: counter + 1, posts });
+		}, 1000);
+	};
+
+	componentDidMount() {
+		// quando o componente for montado na tela
+		this.handleTimeout();
+	}
+
+	componentDidUpdate() {
+		this.handleTimeout();
+	}
+
+  componentWillUnmount() {
+    clearTimeout(this.timeoutUpdate);
+  }
 
 	render() {
-		const { posts } = this.state;
+		const { counter, posts } = this.state;
 		return (
 			<div className="App">
+				<h1>{counter}</h1>
 				{posts.map((post) => (
 					<div key={post.id}>
-						<h1>{post.title}</h1>
+						<h2>{post.title}</h2>
 						<p>{post.body}</p>
 					</div>
 				))}
