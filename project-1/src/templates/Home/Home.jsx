@@ -3,6 +3,7 @@ import { Component } from 'react';
 import loadPosts from '../../utils/loadPosts';
 import Posts from '../../components/Posts';
 import Button from '../../components/Button';
+import TextInput from '../../components/TextInput';
 
 const urlPosts = 'https://jsonplaceholder.typicode.com/posts';
 const urlPhotos = 'https://jsonplaceholder.typicode.com/photos';
@@ -13,6 +14,7 @@ class Home extends Component {
 		allPosts: [],
 		page: 0,
 		postsPerPage: 10,
+		searchValue: '',
 	};
 
 	async componentDidMount() {
@@ -37,18 +39,38 @@ class Home extends Component {
 		this.setState({ posts, page: nextPage });
 	};
 
+	handleChange = (e) => {
+		const { value } = e.target;
+		this.setState({ searchValue: value });
+	};
+
 	render() {
-		const { posts, page, postsPerPage, allPosts } = this.state;
+		const { posts, page, postsPerPage, allPosts, searchValue } = this.state;
 		const noMorePosts = page + postsPerPage >= allPosts.length;
+		const filteredPosts = !!searchValue
+			? allPosts.filter((post) => {
+					return post.title.toLowerCase().includes(searchValue.toLowerCase());
+			  })
+			: posts;
 		return (
 			<section className="container">
-				<Posts posts={posts} />
-				<div className="button-container">
-					<Button
-						text="Mais posts"
-						loadMorePosts={this.loadMorePosts}
-						disabled={noMorePosts}
+				{!!searchValue && <h1>Search Input: {searchValue}</h1>}
+				<div className="search-container">
+					<TextInput
+						handleChange={this.handleChange}
+						searchValue={searchValue}
 					/>
+				</div>
+				{filteredPosts.length > 0 && <Posts posts={filteredPosts} />}
+				{filteredPosts.length === 0 && <p>Não tem posts =(</p>}
+				<div className="button-container">
+					{!searchValue && (
+						<Button
+							text="Mais posts"
+							loadMorePosts={this.loadMorePosts}
+							disabled={noMorePosts}
+						/>
+					)}
 				</div>
 			</section>
 		);
