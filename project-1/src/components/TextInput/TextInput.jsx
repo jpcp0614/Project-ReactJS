@@ -5,6 +5,7 @@ const TextInput = ({ handleChange, searchValue }) => {
 		<input
 			type="search"
 			className="input-search"
+			placeholder="Digite aqui"
 			onChange={handleChange}
 			value={searchValue}
 		/>
