@@ -110,4 +110,21 @@ describe('<Home />', () => {
 
     screen.debug();
   });
+
+  it('should load more posts', async () => {
+    render(<Home />);
+    const noMorePosts = screen.getByText('Não tem posts');
+
+    // expect.assertions(3);
+
+    await waitForElementToBeRemoved(noMorePosts);
+
+    const button = screen.getByRole('button', { name: /mais posts/i });
+    expect(button).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'title3 - 3' })).not.toBeInTheDocument();
+
+    fireEvent.click(button);
+    expect(screen.getByRole('heading', { name: 'title3 - 3' })).toBeInTheDocument();
+    expect(button).toBeDisabled();
+  });
 });
